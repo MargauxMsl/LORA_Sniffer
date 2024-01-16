@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "LoraWan", "LoraWan\LoraWan.pyproj", "{5D8DCA10-7B98-4967-A9FB-A19394BC60AE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5D8DCA10-7B98-4967-A9FB-A19394BC60AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D8DCA10-7B98-4967-A9FB-A19394BC60AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A429908D-9D2A-4D29-BE88-B453135D091E}
+	EndGlobalSection
+EndGlobal
