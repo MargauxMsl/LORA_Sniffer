@@ -1,0 +1,48 @@
+# c'est le meme coe de la premiere version sauf ici j'ai ajouté la fonction pour pour enregistrer les paquets reçus dans un fichier PCAP
+# il faut installer le package scapy via la commande: pip install scapy dans le terminal
+
+
+import time
+from sx127x.LoRa import *
+from sx127x import *
+from scapy.all import wrpcap, Ether, IP, Raw
+
+class LoRaSniffer(LoRa):
+    def __init__(self, verbose=False):
+        super(LoRaSniffer, self).__init__(verbose)
+        self.set_mode(MODE.SLEEP)
+
+    def start_sniffing(self):
+        self.set_dio_mapping([0] * 6)
+        self.set_mode(MODE.STDBY)
+        self.set_payload_length(255)
+        self.set_mode(MODE.RXSINGLE)
+
+def print_payload(payload):
+     # Crée un objet Packet avec une couche Raw contenant le payload LoRa
+    packet = Ether() / IP() / Raw(load=payload)
+    # Enregistre le paquet dans un fichier PCAP
+    wrpcap("lorawan_sniffer.pcap", [packet])
+    print("Received:", " ".join(format(x, "02x") for x in payload))
+
+def main():
+    lora = LoRaSniffer()
+    lora.set_mode(MODE.SLEEP)
+    lora.set_dio_mapping([1, 0, 0, 0, 0, 0])
+    lora.set_pa_config(pa_select=1)
+    lora.set_mode(MODE.RXCONT)
+
+    try:
+        print("LoRa Sniffer is running...")
+        while True:
+            if lora.received():
+                payload = lora.read_payload()
+                print_payload(payload)
+            time.sleep(0.1)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        lora.set_mode(MODE.SLEEP)
+
+if __name__ == "__main__":
+    main()
