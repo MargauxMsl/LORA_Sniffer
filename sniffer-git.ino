@@ -140,31 +140,47 @@ void loop()
     digitalWrite(LED, LOW);
     
 
-    if (rf95.available())
-    { 
-      Serial.println("I'm in the loop");
-        digitalWrite(LED, HIGH);
-        if (rf95.recv(rxBuffer, &rxRecvLen))
-        {
+    if (rf95.recv(rxBuffer, &rxRecvLen)) {
             char isAck[4] = {""};
             if (rf95.headerFlags() & RH_FLAGS_ACK)
                 memcpy(isAck, "Ack\0", 3);
             rxBuffer[rxRecvLen] = '\0';
+
+            // Print complete header information
+            snprintf(printBuffer, sizeof(printBuffer), "Packet Details:\n");
+            Serial.print(printBuffer);
             
-            if (mode == delimited)
-            {
-                snprintf(printBuffer, sizeof(printBuffer), formatString, rxCount++, millis(), rf95.lastRssi(), rf95.headerFrom(), rf95.headerTo(), rf95.headerId(), rf95.headerFlags(), isAck, rxRecvLen, rxBuffer);
-                Serial.println(printBuffer);
-            }
-            else
-            {
-                snprintf(printBuffer, sizeof(printBuffer), "Recv#:%d @ %d,   Signal(RSSI)= %d", rxCount++, millis(), rf95.lastRssi());
-                Serial.println(printBuffer);
-                snprintf(printBuffer, sizeof(printBuffer), " From: %d >> To: %d     MsgId: %d  Flags: %2x    %s", rf95.headerFrom(), rf95.headerTo(), rf95.headerId(), rf95.headerFlags(), isAck);
-                Serial.println(printBuffer);
-                snprintf(printBuffer, sizeof(printBuffer), "Bytes: %d => %s \r\n", rxRecvLen, rxBuffer);
-                Serial.println(printBuffer);
-            }
+            snprintf(printBuffer, sizeof(printBuffer), "  - Rx Count: %d\n", rxCount++);
+            Serial.print(printBuffer);
+
+            snprintf(printBuffer, sizeof(printBuffer), "  - Rx@millis: %d\n", millis());
+            Serial.print(printBuffer);
+
+            snprintf(printBuffer, sizeof(printBuffer), "  - Last RSSI: %d\n", rf95.lastRssi());
+            Serial.print(printBuffer);
+
+            snprintf(printBuffer, sizeof(printBuffer), "  - From Addr: %d\n", rf95.headerFrom());
+            Serial.print(printBuffer);
+
+            snprintf(printBuffer, sizeof(printBuffer), "  - To Addr: %d\n", rf95.headerTo());
+            Serial.print(printBuffer);
+
+            snprintf(printBuffer, sizeof(printBuffer), "  - MsgId: %d\n", rf95.headerId());
+            Serial.print(printBuffer);
+
+            snprintf(printBuffer, sizeof(printBuffer), "  - Hdr Flags: %2x\n", rf95.headerFlags());
+            Serial.print(printBuffer);
+
+            snprintf(printBuffer, sizeof(printBuffer), "  - isAck: %s\n", isAck);
+            Serial.print(printBuffer);
+
+            snprintf(printBuffer, sizeof(printBuffer), "  - Packet Len: %d\n", rxRecvLen);
+            Serial.print(printBuffer);
+
+            snprintf(printBuffer, sizeof(printBuffer), "  - Packet Contents: %s\n", rxBuffer);
+            Serial.print(printBuffer);
+
+            Serial.println(); // Add a newline for better readability
         }
     }
 }
