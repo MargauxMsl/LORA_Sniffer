@@ -1,5 +1,5 @@
-// MIT License 
-// Copyright 2017 LooUQ Incorportated.
+// MIT License
+// Copyright 2017 LooUQ Incorporated.
 // Many thanks to Adafruit and AirSpayce.
 
 /* Example sketch to capture all packets on a LoRa (RF95) radio network and send them to the      
@@ -16,12 +16,11 @@ enum OutputMode { verbose, delimited };
 
 /* Define your desired output format here */
 OutputMode mode = verbose;
-#define DELIMETER_CHAR '~'
-/* end output format defintion */
+#define DELIMITER_CHAR '~'
+/* end output format definition */
 
 #include <SPI.h>
 #include <RH_RF95.h>
-#include <stdio.h>
 
 #define RH_FLAGS_ACK 0x80
 
@@ -87,45 +86,45 @@ void setup()
     Serial.begin(9600);
     delay(100);
 
-  Serial.print("Feather LoRa Network Probe [Mode=");
-  Serial.print(mode == verbose ? "verbose" : "delimeted");
-  Serial.println("]");
-  
-  // manual reset
-  digitalWrite(RFM95_RST, LOW);
-  delay(10);
-  digitalWrite(RFM95_RST, HIGH);
-  delay(10);
+    Serial.print("Feather LoRa Network Probe [Mode=");
+    Serial.print(mode == verbose ? "verbose" : "delimited");
+    Serial.println("]");
+    
+    // manual reset
+    digitalWrite(RFM95_RST, LOW);
+    delay(10);
+    digitalWrite(RFM95_RST, HIGH);
+    delay(10);
 
-  while (!rf95.init()) {
-    Serial.println("LoRa radio init failed");
-    while (1);
-  }
-  Serial.println("LoRa radio init OK!");
+    while (!rf95.init()) {
+        Serial.println("LoRa radio init failed");
+        while (1);
+    }
+    Serial.println("LoRa radio init OK!");
 
-  if (!rf95.setFrequency(RF95_FREQ)) {                  // Defaults after init are 434.0MHz, modulation GFSK_Rb250Fd250, +13dbM
-      Serial.println("setFrequency failed");
-      while (1);                                        // if can't set frequency, we are cooked!
-  }
-  Serial.print("Set Freq to: "); Serial.println(RF95_FREQ);
+    if (!rf95.setFrequency(RF95_FREQ)) {                  // Defaults after init are 434.0MHz, modulation GFSK_Rb250Fd250, +13dbM
+        Serial.println("setFrequency failed");
+        while (1);                                        // if can't set frequency, we are cooked!
+    }
+    Serial.print("Set Freq to: "); Serial.println(RF95_FREQ);
 
     // Defaults after init are 434.0MHz, 13dBm, Bw = 125 kHz, Cr = 4/5, Sf = 128chips/symbol, CRC on
 
     // need to setPromiscuous(true) to receive all frames
     rf95.setPromiscuous(true);
 
-    // set delimeter
+    // set delimiter
     if (mode == delimited) {
-        if (DELIMETER_CHAR != '~') {
+        if (DELIMITER_CHAR != '~') {
             for (int i = 0; i < sizeof(formatString); i++)
             {
                 if (formatString[i] == '~')
-                    formatString[i] = DELIMETER_CHAR;
+                    formatString[i] = DELIMITER_CHAR;
             }
             for (int i = 0; i < sizeof(legendString); i++)
             {
                 if (legendString[i] == '~')
-                    legendString[i] = DELIMETER_CHAR;
+                    legendString[i] = DELIMITER_CHAR;
             }
         }
         Serial.println(legendString);
@@ -135,53 +134,51 @@ void setup()
 
 void loop()
 {
-    // wait for a lora packet
+    // wait for a LoRa packet
     rxRecvLen = sizeof(rxBuffer);               // RadioHead expects max buffer, will update to received bytes
     digitalWrite(LED, LOW);
     
 
     if (rf95.recv(rxBuffer, &rxRecvLen)) {
-            char isAck[4] = {""};
-            if (rf95.headerFlags() & RH_FLAGS_ACK)
-                memcpy(isAck, "Ack\0", 3);
-            rxBuffer[rxRecvLen] = '\0';
+        char isAck[4] = {""};
+        if (rf95.headerFlags() & RH_FLAGS_ACK)
+            memcpy(isAck, "Ack\0", 3);
+        rxBuffer[rxRecvLen] = '\0';
 
-            // Print complete header information
-            snprintf(printBuffer, sizeof(printBuffer), "Packet Details:\n");
-            Serial.print(printBuffer);
-            
-            snprintf(printBuffer, sizeof(printBuffer), "  - Rx Count: %d\n", rxCount++);
-            Serial.print(printBuffer);
+        // Print complete header information
+        snprintf(printBuffer, sizeof(printBuffer), "Packet Details:\n");
+        Serial.print(printBuffer);
+        
+        snprintf(printBuffer, sizeof(printBuffer), "  - Rx Count: %d\n", rxCount++);
+        Serial.print(printBuffer);
 
-            snprintf(printBuffer, sizeof(printBuffer), "  - Rx@millis: %d\n", millis());
-            Serial.print(printBuffer);
+        snprintf(printBuffer, sizeof(printBuffer), "  - Rx@millis: %d\n", millis());
+        Serial.print(printBuffer);
 
-            snprintf(printBuffer, sizeof(printBuffer), "  - Last RSSI: %d\n", rf95.lastRssi());
-            Serial.print(printBuffer);
+        snprintf(printBuffer, sizeof(printBuffer), "  - Last RSSI: %d\n", rf95.lastRssi());
+        Serial.print(printBuffer);
 
-            snprintf(printBuffer, sizeof(printBuffer), "  - From Addr: %d\n", rf95.headerFrom());
-            Serial.print(printBuffer);
+        snprintf(printBuffer, sizeof(printBuffer), "  - From Addr: %d\n", rf95.headerFrom());
+        Serial.print(printBuffer);
 
-            snprintf(printBuffer, sizeof(printBuffer), "  - To Addr: %d\n", rf95.headerTo());
-            Serial.print(printBuffer);
+        snprintf(printBuffer, sizeof(printBuffer), "  - To Addr: %d\n", rf95.headerTo());
+        Serial.print(printBuffer);
 
-            snprintf(printBuffer, sizeof(printBuffer), "  - MsgId: %d\n", rf95.headerId());
-            Serial.print(printBuffer);
+        snprintf(printBuffer, sizeof(printBuffer), "  - MsgId: %d\n", rf95.headerId());
+        Serial.print(printBuffer);
 
-            snprintf(printBuffer, sizeof(printBuffer), "  - Hdr Flags: %2x\n", rf95.headerFlags());
-            Serial.print(printBuffer);
+        snprintf(printBuffer, sizeof(printBuffer), "  - Hdr Flags: %2x\n", rf95.headerFlags());
+        Serial.print(printBuffer);
 
-            snprintf(printBuffer, sizeof(printBuffer), "  - isAck: %s\n", isAck);
-            Serial.print(printBuffer);
+        snprintf(printBuffer, sizeof(printBuffer), "  - isAck: %s\n", isAck);
+        Serial.print(printBuffer);
 
-            snprintf(printBuffer, sizeof(printBuffer), "  - Packet Len: %d\n", rxRecvLen);
-            Serial.print(printBuffer);
+        snprintf(printBuffer, sizeof(printBuffer), "  - Packet Len: %d\n", rxRecvLen);
+        Serial.print(printBuffer);
 
-            snprintf(printBuffer, sizeof(printBuffer), "  - Packet Contents: %s\n", rxBuffer);
-            Serial.print(printBuffer);
+        snprintf(printBuffer, sizeof(printBuffer), "  - Packet Contents: %s\n", rxBuffer);
+        Serial.print(printBuffer);
 
-            Serial.println(); // Add a newline for better readability
-        }
+        Serial.println(); // Add a newline for better readability
     }
 }
-    
