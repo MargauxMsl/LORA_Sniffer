@@ -1,4 +1,5 @@
 import serial
+import pickle
 
 # Spécifiez le port série sur lequel votre Arduino est connecté
 port = '/dev/ttyACM0'  # Remplacez cela par le bon port sur votre système (peut être COMx sur Windows)
@@ -39,6 +40,11 @@ try:
             # Ajoutez votre traitement des données ici
             # Par exemple, imprimez le dictionnaire mis à jour
             print("Données traitées:", data_dict)
+            # Enregistrez le dictionnaire avec pickle
+            with open(f'pkt/data_dict_{i}.pkl', 'wb') as pickle_file:
+                pickle.dump(data_dict, pickle_file)
+            
+
         i += 1
 
 except KeyboardInterrupt:
