@@ -45,7 +45,7 @@ try:
                 pickle.dump(data_dict, pickle_file)
             
 
-        i += 1
+            i += 1
 
 except KeyboardInterrupt:
     # Gérez l'interruption du clavier (Ctrl+C) pour fermer proprement la connexion série
