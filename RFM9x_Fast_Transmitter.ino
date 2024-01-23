@@ -15,6 +15,9 @@
 
 // Change to 434.0 or other frequency, must match RX's freq!
 #define RF95_FREQ 868.1
+#define address_transmitter 12
+#define address_receiver 235
+
 
 // Singleton instance of the radio driver
 RH_RF95 rf95(RFM95_CS, RFM95_INT);
@@ -50,6 +53,12 @@ void setup()
   Serial.print("Set Freq to: "); Serial.println(RF95_FREQ);
   
   // Defaults after init are 434.0MHz, 13dBm, Bw = 125 kHz, Cr = 4/5, Sf = 128chips/symbol, CRC on
+
+   rf95.setModemConfig('Bw31_25Cr48Sf512');
+   rf95.setThisAddress(address_transmitter);
+   rf95.setHeaderFrom(address_transmitter);
+   rf95.setHeaderTo(address_receiver);
+
 
   // The default transmitter power is 13dBm, using PA_BOOST.
   // If you are using RFM95/96/97/98 modules which uses the PA_BOOST transmitter pin, then 
